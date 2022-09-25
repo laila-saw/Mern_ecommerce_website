@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { sliderItems, categories, popularProducts } from './data';
@@ -20,23 +20,23 @@ import { publicRequest } from './requestMethods';
 // 00:11 -> 22:08
 ReactDOM.render(
   <Router>
-    <ScrollToTop/>
+    <ScrollToTop />
     <App />
   </Router>,
   document.getElementById('root')
 );
 function App() {
-  const user=true;
+  const user = true;
   return (
     <Routes>
-      
+
       <Route exact path='/' element={<Home />} />
       <Route path='/productList/:category' element={<ProductList />} />
-      <Route path='/product/:id' element={<Product />} /> 
+      <Route path='/product/:id' element={<Product />} />
       {
-        user 
-        ?<Route path='/signinup' element={<Navigate replace to="/" />} />
-        :<Route path='/signinup' element={<Signinup />} />
+        user
+          ? <Route path='/signinup' element={<Navigate replace to="/" />} />
+          : <Route path='/signinup' element={<Signinup />} />
       }
       <Route path='/cart' element={<Cart />} />
       <Route path='/pay' element={<Pay />} />
@@ -44,9 +44,9 @@ function App() {
     </Routes>
   )
 }
-function Pay(){
+function Pay() {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOWZhZjhhMWY2OGMxZjkyMmE1ZGYwNCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY2NDA5MjkwOCwiZXhwIjoxNjY0MzUyMTA4fQ.4q62LYUzLhVXsF_U4rVFqy9hl2OGXTFuRQIYtc5jTe4";
+  const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOWZhZjhhMWY2OGMxZjkyMmE1ZGYwNCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY2NDA5MjkwOCwiZXhwIjoxNjY0MzUyMTA4fQ.4q62LYUzLhVXsF_U4rVFqy9hl2OGXTFuRQIYtc5jTe4";
   const [stripToken, setStripeToken] = useState(null);
 
   function onToken(token) {
@@ -55,13 +55,13 @@ function Pay(){
   useEffect(() => {
     const makeRequest = async () => {
       try {
-        const res=await axios.post(
-          "http://localhost:5000/api/checkout/payment",{
-          tokenId:stripToken.id,
-          amount:2000
-          }
-          );
-          console.log(res.data);
+        const res = await axios.post(
+          "http://localhost:5000/api/checkout/payment", {
+          tokenId: stripToken.id,
+          amount: 2000
+        }
+        );
+        console.log(res.data);
       } catch (error) {
         console.log(error)
       }
@@ -69,29 +69,29 @@ function Pay(){
     stripToken && makeRequest();
   }, [stripToken])
 
-  
-  return(
+
+  return (
     <>
-    <StripeCheckout 
-    name='Saw Shop'
-    image={PF+"logo.png"}
-    billingAddress
-    shippingAddress
-    description='Your Total is $20!'
-    amount={2000}
-    token={onToken}
-    stripeKey={KEY}
-    >
-      <button>payment</button>
-    </StripeCheckout>
-    
+      <StripeCheckout
+        name='Saw Shop'
+        image={PF + "logo.png"}
+        billingAddress
+        shippingAddress
+        description='Your Total is $20!'
+        amount={2000}
+        token={onToken}
+        stripeKey={KEY}
+      >
+        <button>payment</button>
+      </StripeCheckout>
+
     </>
   )
 }
-function Success(){
-  return(
+function Success() {
+  return (
     <>
-    <div></div>
+      <div></div>
     </>
   )
 }
@@ -106,11 +106,11 @@ function Home() {
       <Announcement />
       <Navbar pf={PF} />
       <div className="mainPage">
-      <Slider pf={PF} />
-      <Categories pf={PF} />
-      <h1 className='title' style={{ marginLeft: "35px" }}>Popular Products</h1>
-      <Products pf={PF} />
-      <Newsletter />
+        <Slider pf={PF} />
+        <Categories pf={PF} />
+        <h1 className='title' style={{ marginLeft: "35px" }}>Popular Products</h1>
+        <Products pf={PF} />
+        <Newsletter />
       </div>
       <Footer pf={PF} />
     </>
@@ -123,11 +123,11 @@ function ProductList() {
   return (
     <>
       <Announcement />
-      <Navbar pf={PF}/>
+      <Navbar pf={PF} />
       <div className="mainPage">
-      <FilterProducts/>
-      <Newsletter />
-      <Footer pf={PF}/>
+        <FilterProducts />
+        <Newsletter />
+        <Footer pf={PF} />
       </div>
     </>
   )
@@ -140,11 +140,11 @@ function Product() {
   return (
     <>
       <Announcement />
-      <Navbar pf={PF}/>
+      <Navbar pf={PF} />
       <div className="mainPage">
-      <ProductDetails pf={PF}/>
-      <Newsletter />
-      <Footer pf={PF}/>
+        <ProductDetails pf={PF} />
+        <Newsletter />
+        <Footer pf={PF} />
       </div>
     </>
   )
@@ -156,11 +156,11 @@ function Cart() {
   return (
     <>
       <Announcement />
-      <Navbar pf={PF}/>
-     <div className="mainPage">
-     <CartContainer pf={PF}/>
-      <Footer pf={PF}/>
-     </div>
+      <Navbar pf={PF} />
+      <div className="mainPage">
+        <CartContainer pf={PF} />
+        <Footer pf={PF} />
+      </div>
     </>
   )
 }
@@ -251,13 +251,13 @@ function ScrollToTop() {
 }
 // navbar
 
-function Navbar({pf}) {
-  const [language,setLanguage]=useState(false);
-  
-  window.onscroll=function(){
-    if(document.documentElement.scrollTop>10){
+function Navbar({ pf }) {
+  const [language, setLanguage] = useState(false);
+
+  window.onscroll = function () {
+    if (document.documentElement.scrollTop > 10) {
       document.querySelector('.navbar')?.classList.add('fixed');
-    }else{
+    } else {
       document.querySelector('.navbar')?.classList.remove('fixed');
     }
   }
@@ -272,18 +272,18 @@ function Navbar({pf}) {
             <div className="icon"><i className="fa fa-search"></i></div>
           </div>
           <div className={language ? "show language mobileItem" : "language mobileItem"}>
-            <div className="languageTop" onClick={()=>setLanguage(!language)}>
-              <div className="flag"><img src={pf+"flags/en.png"} alt="" /></div>
+            <div className="languageTop" onClick={() => setLanguage(!language)}>
+              <div className="flag"><img src={pf + "flags/en.png"} alt="" /></div>
               <span className="text">En</span>
               <i className="fa fa-angle-down"></i>
             </div>
             <div className="languageBottom">
               <div className="languageBottomItem">
-                <div className="flag"><img src={pf+'flags/sa.png'} alt="" /></div>
+                <div className="flag"><img src={pf + 'flags/sa.png'} alt="" /></div>
                 <span className="text">Ar</span>
               </div>
               <div className="languageBottomItem">
-                <div className="flag"><img src={pf+'flags/sa.png'} alt="" /></div>
+                <div className="flag"><img src={pf + 'flags/sa.png'} alt="" /></div>
                 <span className="text">Ar</span>
               </div>
             </div>
@@ -293,20 +293,20 @@ function Navbar({pf}) {
         <div className="row">
           <div className="col-md-4 col-2 nvabarLeft">
             <i className="fas fa-bars" onClick={() => open(true)}></i>
-            
+
             <div className={language ? "show language hasDisapair" : "language hasDisapair"}>
-              <div className="languageTop" onClick={()=>setLanguage(!language)}>
-                <div className="flag"><img src={pf+"flags/en.png"} alt="" /></div>
+              <div className="languageTop" onClick={() => setLanguage(!language)}>
+                <div className="flag"><img src={pf + "flags/en.png"} alt="" /></div>
                 <span className="text">En</span>
                 <i className="fa fa-angle-down"></i>
               </div>
               <div className="languageBottom">
                 <div className="languageBottomItem">
-                  <div className="flag"><img src={pf+'flags/sa.png'} alt="" /></div>
+                  <div className="flag"><img src={pf + 'flags/sa.png'} alt="" /></div>
                   <span className="text">Ar</span>
                 </div>
                 <div className="languageBottomItem">
-                  <div className="flag"><img src={pf+'flags/sa.png'} alt="" /></div>
+                  <div className="flag"><img src={pf + 'flags/sa.png'} alt="" /></div>
                   <span className="text">Ar</span>
                 </div>
               </div>
@@ -317,15 +317,15 @@ function Navbar({pf}) {
             </div>
           </div>
           <div className="col-md-4 col-8 nvabarCenter">
-            <Link to="/pay"><img src={pf+"logo.png"} alt="" className="logo" /></Link>
+            <Link to="/pay"><img src={pf + "logo.png"} alt="" className="logo" /></Link>
           </div>
           <div className="col-md-4 col-2 nvabarRight">
             <div className="menuItem hasDisapair"><Link to="/signinup">Login/Register</Link></div>
             <Link to='/success'>
-            <div className="menuItem">
-              <div className="iconBadge">4</div>
-              <div className="nvabarRightIcon"><i className="fa fa-shopping-cart"></i></div>
-            </div>
+              <div className="menuItem">
+                <div className="iconBadge">4</div>
+                <div className="nvabarRightIcon"><i className="fa fa-shopping-cart"></i></div>
+              </div>
             </Link>
           </div>
         </div>
@@ -341,7 +341,7 @@ function Announcement() {
     </div>
   )
 }
-function Slider({pf}) {
+function Slider({ pf }) {
   let [slideIndex, setSlideIndex] = useState(0);
   function sliderClick(direction) {
     if (direction === "left") {
@@ -361,7 +361,7 @@ function Slider({pf}) {
           sliderItems.map((item) => (
             <div key={item.id} className="silde" style={{ backgroundColor: item.bg }}>
               <div className="imgContainer">
-                <img src={pf+item.img} alt="" />
+                <img src={pf + item.img} alt="" />
               </div>
               <div className="infoContainer">
                 <h1 className="sliderTitle">{item.title}</h1>
@@ -378,7 +378,7 @@ function Slider({pf}) {
     </div>
   )
 }
-function Categories({pf}) {
+function Categories({ pf }) {
   return (
     <div className="categories row">
       {
@@ -393,7 +393,7 @@ function CategorieItem({ item, pf }) {
   return (
     <Link to={`/productList/${item.cat}`} className="categorieItem col-12 col-sm-6 col-md-4 col-lg-3">
       <div className="categorieItemImg">
-        <img src={pf+item.img} alt="" />
+        <img src={pf + item.img} alt="" />
       </div>
       <div className="categorieInfo">
         <h2 className="categorieItemTitle">{item.title} </h2>
@@ -402,60 +402,60 @@ function CategorieItem({ item, pf }) {
     </Link>
   )
 }
-function Products({pf, category, sort, filters}) {
-  const [products,setProducts]=useState([])
-  const [filteredProducts,setFilteredProducts]=useState([])
+function Products({ pf, category, sort, filters }) {
+  const [products, setProducts] = useState([])
+  const [filteredProducts, setFilteredProducts] = useState([])
   useEffect(() => {
-    const getProducts = async () =>{
+    const getProducts = async () => {
       console.log("hi")
-      try{
-        const res= await axios.get(
-          category 
-          ? "http://localhost:5000/api/product?category="+category 
-          : "http://localhost:5000/api/product")
-        console.log("res",res.data)
+      try {
+        const res = await axios.get(
+          category
+            ? "http://localhost:5000/api/product?category=" + category
+            : "http://localhost:5000/api/product")
+        console.log("res", res.data)
         setProducts(res.data)
-      }catch(err){
+      } catch (err) {
         console.log(err)
       }
     }
     getProducts();
   }, [category])
   useEffect(() => {
-    category && 
-    setFilteredProducts(
-      products.filter((item)=>
-      Object.entries(filters).every(([key, value]) =>
-      item[key].includes(value)
+    category &&
+      setFilteredProducts(
+        products.filter((item) =>
+          Object.entries(filters).every(([key, value]) =>
+            item[key].includes(value)
+          )
+        )
       )
-      )
-    )
-  }, [products,category,filters])
+  }, [products, category, filters])
   useEffect(() => {
-    if(sort==="newset"){
-      setFilteredProducts((prev) => 
-      [...prev].sort((a,b) => a.createdAt - b.createdAt )
+    if (sort === "newset") {
+      setFilteredProducts((prev) =>
+        [...prev].sort((a, b) => a.createdAt - b.createdAt)
       )
-    }else if(sort==="asc"){
-      setFilteredProducts((prev) => 
-      [...prev].sort((a,b) => a.price - b.price )
+    } else if (sort === "asc") {
+      setFilteredProducts((prev) =>
+        [...prev].sort((a, b) => a.price - b.price)
       )
-    } else{
-      setFilteredProducts((prev) => 
-      [...prev].sort((a,b) => b.price - a.price )
+    } else {
+      setFilteredProducts((prev) =>
+        [...prev].sort((a, b) => b.price - a.price)
       )
     }
   }, [sort])
-  
-  
+
+
   return (
     <div className="products row">
-      {  category 
-        ? filteredProducts.map((item,i) => (
-          <ProductItem  pf={pf} item={item} key={i} />
+      {category
+        ? filteredProducts.map((item, i) => (
+          <ProductItem pf={pf} item={item} key={i} />
         ))
-        : products.slice(0,8).map((item,i) => (
-          <ProductItem  pf={pf} item={item} key={i} />
+        : products.slice(0, 8).map((item, i) => (
+          <ProductItem pf={pf} item={item} key={i} />
         ))
       }
       <div className="pagination">
@@ -468,13 +468,13 @@ function Products({pf, category, sort, filters}) {
     </div>
   )
 }
-function ProductItem({ item,pf }) {
-  const PU=process.env.REACT_APP_PUBLIC_URL;
+function ProductItem({ item, pf }) {
+  const PU = process.env.REACT_APP_PUBLIC_URL;
   return (
-    <Link to={"/product/"+item._id} className="productItem col-12 col-sm-6 col-md-4 col-lg-3">
+    <Link to={"/product/" + item._id} className="productItem col-12 col-sm-6 col-md-4 col-lg-3">
       <div className="productInfo">
         <div className="productItemImg">
-          <img src={pf+item.img[0]} alt="" />
+          <img src={pf + item.img[0]} alt="" />
         </div>
         <div className="productInfoCentent">
           <div className="icon">
@@ -516,11 +516,11 @@ function Newsletter() {
     </div>
   )
 }
-function Footer({pf}) {
+function Footer({ pf }) {
   return (
     <div className="footer row">
       <div className="col-sm-12 col-md-4 footerLeft">
-      <Link to="/"><img src={pf+"logo.png"} alt="" className="logo" /></Link>
+        <Link to="/"><img src={pf + "logo.png"} alt="" className="logo" /></Link>
         <p className="footerDesc">
           Lorem ipsum dolor sit amet consectetur adipisicing elit.
           Eius accusantium iusto cupiditate dolorum perspiciatis iste
@@ -563,22 +563,22 @@ function Footer({pf}) {
             <div className="text">Saw.Saw@gmail.com</div>
           </div>
         </div>
-        <img src={pf+"/payement.png"} alt="" />
+        <img src={pf + "/payement.png"} alt="" />
       </div>
     </div>
   )
 }
-function FilterProducts({}) {
+function FilterProducts({ }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const location = useLocation();
-  const category=location.pathname.split("/")[2];
-  const [filters, setFilters]=useState({})
-  const [sort, setSort]=useState("newest")
-  const handleFilters = (e) =>{
+  const category = location.pathname.split("/")[2];
+  const [filters, setFilters] = useState({})
+  const [sort, setSort] = useState("newest")
+  const handleFilters = (e) => {
     console.log(e.target.value)
     setFilters({
       ...filters,
-      [e.target.name] : e.target.value
+      [e.target.name]: e.target.value
     })
   }
   return (
@@ -597,7 +597,7 @@ function FilterProducts({}) {
             <option value="gold" >Gold</option>
           </select>
           <select name='size' onChange={handleFilters} className=''>
-            <option value=""  disabled>Size</option>
+            <option value="" disabled>Size</option>
             <option value="XS" >XS</option>
             <option value="S" >S</option>
             <option value="M" >M</option>
@@ -607,7 +607,7 @@ function FilterProducts({}) {
         </div>
         <div className="filter">
           <span className="filterText">sort Products : </span>
-          <select onChange={e=>setSort(e.target.value)}>
+          <select onChange={e => setSort(e.target.value)}>
             <option value='newest' >Newest</option>
             <option value='asc' >Price (asc)</option>
             <option value='desc' >Price (desc)</option>
@@ -618,33 +618,44 @@ function FilterProducts({}) {
     </div>
   )
 }
-function ProductDetails({pf}) {
-  
-  const [img,setImg]=useState(pf+"")
-  function handleClick(e){
+function ProductDetails({ pf }) {
+
+  const [img, setImg] = useState(pf + "")
+  function handleClick(e) {
     setImg(e.target.src)
   }
   const location = useLocation();
   const id = location.pathname.split('/')[2]
-  const [product,setProduct] = useState([])
+  const [product, setProduct] = useState([])
+  const [quantity, setQuantity] = useState(1)
+  const [color, setColor] = useState("")
+  const [size, setSize] = useState("")
   useEffect(() => {
     const getProduct = async () => {
       try {
-        const res = await publicRequest.get("product/find/"+id)
+        const res = await publicRequest.get("product/find/" + id)
         setProduct(res.data)
-        setImg(pf+res.data.img[0])
-        
+        setImg(pf + res.data.img[0])
+        setColor(res.data.color[0])
+        setSize(res.data.size[0])
+
       } catch (error) {
         console.log(error)
       }
     }
     getProduct()
-   
+
   }, [id])
-   if(product.categories){
-    console.log(pf+product.img)
+  if (product.categories) {
+    console.log(pf + product.img)
   }
-  
+  const handleQuantity = (type) => {
+    if(type==="dec" && quantity>1){
+      setQuantity(quantity-1)
+    }else if(type==="inc" && quantity<10) {
+      setQuantity(quantity+1)
+    }
+  }
   return (
     <div className="productDetails row py-5">
       <div className="col-sm-12 col-md-6 productImg">
@@ -652,13 +663,13 @@ function ProductDetails({pf}) {
           <img src={img} alt="" id="productimage" />
         </div>
         <div className="smallImgs">
-          { product.img &&
-            product.img.map((item,i)=>(
-              pf+item!==img &&
-              <div key={i} className="smallImg"><img onClick={(e)=>handleClick(e)} className='small-img' src={pf+item} alt="" /> </div>
+          {product.img &&
+            product.img.map((item, i) => (
+              pf + item !== img &&
+              <div key={i} className="smallImg"><img onClick={(e) => handleClick(e)} className='small-img' src={pf + item} alt="" /> </div>
             ))
           }
-          
+
         </div>
 
       </div>
@@ -671,27 +682,48 @@ function ProductDetails({pf}) {
         <div className='productChoices'>
           <div className="productChoice">
             <div className="text">color : </div>
-            {  product.color &&
-              product.color.map((c,i) => (
-                <span key={i} style={{backgroundColor:c}} className="color"></span>
+            {product.color &&
+              product.color.map((c, i) => (
+                <span
+                  onClick={()=>setColor(c)}
+                  key={i}
+                  style={{backgroundColor: c }}
+                  className={color === c ? "selected color" : "color"}>
+                </span>
               ))
             }
           </div>
           <div className="productChoice">
             <div className="text">Size : </div>
             <select defaultValue={"Size"}>
-            <option disabled >Size</option>
-            { product.size && 
-              product.size.map((s,i) => (
-                <option value={s}>{s}</option>
-              ))
-            }
+              {/* <option disabled >{size}</option> */}
+              {product.size &&
+                product.size.map((s, i) => (
+                  <option 
+                  onChange={(e)=>setSize(e.target.value)}
+                  key={i} 
+                  // value={size}
+                  >
+                    {s}
+                  </option>
+                ))
+              }
             </select>
           </div>
         </div>
         <div className="userAction">
           <div className="quantity">
-            <span className='controlBtn'>-</span> <span className="num">1</span> <span className='controlBtn'>+</span>
+            <span
+              onClick={() => handleQuantity("dec")}
+              className='controlBtn'>
+              -
+            </span>
+            <span className="num">
+              {quantity}
+            </span>
+            <span
+              onClick={() => handleQuantity("inc")}
+              className='controlBtn'>+</span>
           </div>
           <Link to="/cart"><button>
             <div className="layer"></div>
@@ -703,7 +735,7 @@ function ProductDetails({pf}) {
     </div>
   );
 }
-function CartContainer({pf}) {
+function CartContainer({ pf }) {
   return (
     <div className="cartContainer">
       <h1 className="title">Your Bag <i className="fa fa-shopping-cart"></i></h1>
@@ -726,7 +758,7 @@ function CartContainer({pf}) {
 
           <div className="orderItem">
             <div className="imgContainer">
-              <img src={pf+"p1.png"} alt="" />
+              <img src={pf + "p1.png"} alt="" />
             </div>
             <div className="orderDetails">
               <div className="proprities">
@@ -757,7 +789,7 @@ function CartContainer({pf}) {
           </div>
           <div className="orderItem">
             <div className="imgContainer">
-              <img src={pf+"p1.png"}  alt="" />
+              <img src={pf + "p1.png"} alt="" />
             </div>
             <div className="orderDetails">
               <div className="proprities">
