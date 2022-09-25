@@ -656,6 +656,11 @@ function ProductDetails({ pf }) {
       setQuantity(quantity+1)
     }
   }
+  console.log("size",size)
+  function handleChange(e){
+    console.log(e.target.value)
+    setSize(e.target.value)
+  }
   return (
     <div className="productDetails row py-5">
       <div className="col-sm-12 col-md-6 productImg">
@@ -695,14 +700,13 @@ function ProductDetails({ pf }) {
           </div>
           <div className="productChoice">
             <div className="text">Size : </div>
-            <select defaultValue={"Size"}>
+            <select value={size} onChange={handleChange} >
               {/* <option disabled >{size}</option> */}
               {product.size &&
                 product.size.map((s, i) => (
                   <option 
-                  onChange={(e)=>setSize(e.target.value)}
                   key={i} 
-                  // value={size}
+                  
                   >
                     {s}
                   </option>
