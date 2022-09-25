@@ -5,7 +5,7 @@ const app= express()
 
 // connect the server to mongoDB 
 const mongoose = require("mongoose")
-// to use .env we should import the labriry
+// to use .env we should import the labrerry
 const dotenv = require("dotenv")
 const cors=require("cors");
 const userRoute=require("./routes/user")
