@@ -20,6 +20,7 @@ import { publicRequest } from './requestMethods';
 // 00:11 -> 22:08
 ReactDOM.render(
   <Router>
+    <ScrollToTop/>
     <App />
   </Router>,
   document.getElementById('root')
@@ -28,6 +29,7 @@ function App() {
   const user=true;
   return (
     <Routes>
+      
       <Route exact path='/' element={<Home />} />
       <Route path='/productList/:category' element={<ProductList />} />
       <Route path='/product/:id' element={<Product />} /> 
@@ -44,7 +46,7 @@ function App() {
 }
 function Pay(){
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const KEY="pk_test_51L8fWaJ2Aid2jG364lonMOuYtTAMeJdsNgWYPS7Ycb2y8QxKIVxk43kHN44WJ1kZoxc9HyHFevRJRH2Tu7u83tP600uvYRjakL";
+  const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOWZhZjhhMWY2OGMxZjkyMmE1ZGYwNCIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY2NDA5MjkwOCwiZXhwIjoxNjY0MzUyMTA4fQ.4q62LYUzLhVXsF_U4rVFqy9hl2OGXTFuRQIYtc5jTe4";
   const [stripToken, setStripeToken] = useState(null);
 
   function onToken(token) {
@@ -238,7 +240,17 @@ function Signinup() {
 // !pages 
 
 // component 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 // navbar
+
 function Navbar({pf}) {
   const [language,setLanguage]=useState(false);
   
@@ -462,7 +474,7 @@ function ProductItem({ item,pf }) {
     <Link to={"/product/"+item._id} className="productItem col-12 col-sm-6 col-md-4 col-lg-3">
       <div className="productInfo">
         <div className="productItemImg">
-          <img src={pf+item.img} alt="" />
+          <img src={pf+item.img[0]} alt="" />
         </div>
         <div className="productInfoCentent">
           <div className="icon">
@@ -607,7 +619,8 @@ function FilterProducts({}) {
   )
 }
 function ProductDetails({pf}) {
-  const [img,setImg]=useState(pf+'p12.png')
+  
+  const [img,setImg]=useState(pf+"")
   function handleClick(e){
     setImg(e.target.src)
   }
@@ -617,31 +630,40 @@ function ProductDetails({pf}) {
   useEffect(() => {
     const getProduct = async () => {
       try {
-        const res = await publicRequest.get("products/find/"+id)
+        const res = await publicRequest.get("product/find/"+id)
         setProduct(res.data)
+        setImg(pf+res.data.img[0])
+        
       } catch (error) {
         console.log(error)
       }
     }
     getProduct()
+   
   }, [id])
+   if(product.categories){
+    console.log(pf+product.img)
+  }
   
   return (
-    <div className="productDetails row">
+    <div className="productDetails row py-5">
       <div className="col-sm-12 col-md-6 productImg">
         <div className="imgContainer">
           <img src={img} alt="" id="productimage" />
         </div>
         <div className="smallImgs">
-          <div className="smallImg"><img onClick={(e)=>handleClick(e)} className='small-img' src={pf+"p12.png"} alt="" /></div>
-          <div className="smallImg"><img onClick={(e)=>handleClick(e)} className='small-img' src={pf+"p13.png"} alt="" /></div>
-          <div className="smallImg"><img onClick={(e)=>handleClick(e)} className='small-img' src={pf+"p14.png"} alt="" /></div>
-          <div className="smallImg"><img onClick={(e)=>handleClick(e)} className='small-img' src={pf+"p15.png"} alt="" /></div>
+          { product.img &&
+            product.img.map((item,i)=>(
+              pf+item!==img &&
+              <div key={i} className="smallImg"><img onClick={(e)=>handleClick(e)} className='small-img' src={pf+item} alt="" /> </div>
+            ))
+          }
+          
         </div>
 
       </div>
       <div className="col-sm-12 col-md-6 ProductInfo">
-        {/* <h1 className="title">{product.title}</h1> */}
+        <h1 className="title">{product.title}</h1>
         <div className="productDesc">
           {product.desc}
         </div>
@@ -649,21 +671,21 @@ function ProductDetails({pf}) {
         <div className='productChoices'>
           <div className="productChoice">
             <div className="text">color : </div>
-            {/* {
+            {  product.color &&
               product.color.map((c,i) => (
-                <span key={i} style={{backgroundColor:c}} className="color">{c}</span>
+                <span key={i} style={{backgroundColor:c}} className="color"></span>
               ))
-            } */}
+            }
           </div>
           <div className="productChoice">
             <div className="text">Size : </div>
             <select defaultValue={"Size"}>
             <option disabled >Size</option>
-            {/* {
+            { product.size && 
               product.size.map((s,i) => (
                 <option value={s}>{s}</option>
               ))
-            } */}
+            }
             </select>
           </div>
         </div>
