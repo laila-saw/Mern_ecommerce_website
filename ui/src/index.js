@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import './index.css';
 import { sliderItems, categories, popularProducts } from './data';
 import StripeCheckout from 'react-stripe-checkout';
@@ -17,13 +17,21 @@ import {
 import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 import { publicRequest } from './requestMethods';
+import {Provider} from "react-redux"
+import store from "./redux/store"
+import {useSelector} from 'react-redux'
+import { addProduct } from './redux/cartRedux';
+import {useDispatch} from "react-redux"
 // 00:11 -> 22:08
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
   <Router>
+    <Provider store={store}>
     <ScrollToTop />
     <App />
-  </Router>,
-  document.getElementById('root')
+    </Provider>
+  </Router>
+  ,
 );
 function App() {
   const user = true;
@@ -253,7 +261,9 @@ function ScrollToTop() {
 
 function Navbar({ pf }) {
   const [language, setLanguage] = useState(false);
-
+  const [isOpen, open] = useState(false);
+  const quantity= useSelector(state=>state.cart.quantity)
+  console.log("quantity",quantity)
   window.onscroll = function () {
     if (document.documentElement.scrollTop > 10) {
       document.querySelector('.navbar')?.classList.add('fixed');
@@ -261,7 +271,7 @@ function Navbar({ pf }) {
       document.querySelector('.navbar')?.classList.remove('fixed');
     }
   }
-  const [isOpen, open] = useState(false);
+  
   return (
     <div className="navbar">
       <div className="navbarWrapper container-fluid">
@@ -323,7 +333,7 @@ function Navbar({ pf }) {
             <div className="menuItem hasDisapair"><Link to="/signinup">Login/Register</Link></div>
             <Link to='/success'>
               <div className="menuItem">
-                <div className="iconBadge">4</div>
+                <div className="iconBadge">{quantity}</div>
                 <div className="nvabarRightIcon"><i className="fa fa-shopping-cart"></i></div>
               </div>
             </Link>
@@ -661,6 +671,13 @@ function ProductDetails({ pf }) {
     console.log(e.target.value)
     setSize(e.target.value)
   }
+  const dispatch = useDispatch()
+  const handleAddToCart = () =>{
+    dispatch(
+      addProduct({product,quantity,price:product.price * quantity})
+      )
+    
+  }
   return (
     <div className="productDetails row py-5">
       <div className="col-sm-12 col-md-6 productImg">
@@ -694,7 +711,7 @@ function ProductDetails({ pf }) {
                   key={i}
                   style={{backgroundColor: c }}
                   className={color === c ? "selected color" : "color"}>
-                </span>
+                </span> 
               ))
             }
           </div>
@@ -729,10 +746,12 @@ function ProductDetails({ pf }) {
               onClick={() => handleQuantity("inc")}
               className='controlBtn'>+</span>
           </div>
-          <Link to="/cart"><button>
+          <button onClick={handleAddToCart} >
+            <>
             <div className="layer"></div>
             <div className="text">Add to cart</div>
-          </button></Link>
+          </>
+          </button>
         </div>
 
       </div>
