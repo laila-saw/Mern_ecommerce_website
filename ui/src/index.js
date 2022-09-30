@@ -4,24 +4,24 @@ import './index.css';
 import { sliderItems, categories, popularProducts } from './data';
 import StripeCheckout from 'react-stripe-checkout';
 import axios from 'axios';
-
-
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Link,
   Navigate,
-  useLocation
+  useLocation,
+  useNavigate
 } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
-import { publicRequest } from './requestMethods';
+import { publicRequest, userRequest } from './requestMethods';
 import {Provider} from "react-redux"
 import store from "./redux/store"
 import {useSelector} from 'react-redux'
 import { addProduct } from './redux/cartRedux';
-import {useDispatch} from "react-redux"
+import {useDispatch} from "react-redux";
+const KEY= process.env.REACT_APP_STRIPE;
 // 00:11 -> 22:08
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -97,9 +97,13 @@ function Pay() {
   )
 }
 function Success() {
+  const location = useLocation()
+  console.log("location : ",location)
   return (
     <>
-      <div></div>
+      <div>
+        successful
+      </div>
     </>
   )
 }
@@ -676,7 +680,6 @@ function ProductDetails({ pf }) {
     dispatch(
       addProduct({...product, quantity, color, size})
       )
-    
   }
   return (
     <div className="productDetails row py-5">
@@ -760,6 +763,28 @@ function ProductDetails({ pf }) {
 }
 function CartContainer({ pf }) {
   const cart=useSelector(state=>state.cart)
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const [stripeToken,setStripeToken] = useState(null)
+  const onToken = (token) => {
+    setStripeToken(token)
+  }
+  const navigate=useNavigate()
+  console.log("stripeToken",stripeToken)
+  useEffect(() => {
+    const makeRequest = async () =>{
+      try {
+        const res = await userRequest.post("/checkout/payment",{
+          tokenId: stripeToken.id,
+          amount:cart.total * 100,
+        })
+        navigate("/success",{state:{data:res.data}})
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    (stripeToken && cart.total >= 1) && makeRequest()
+  }, [stripeToken,cart.total,navigate])
+  
   return (
     <div className="cartContainer">
       <h1 className="title">Your Bag <i className="fa fa-shopping-cart"></i></h1>
@@ -823,7 +848,7 @@ function CartContainer({ pf }) {
           <div className="summaryGroup">
             <div className="summaryItem">
               <div className="proprity">subtotal</div>
-              <div className="value">$ 80</div>
+              <div className="value">$ {cart.total}</div>
             </div>
             <div className="summaryItem">
               <div className="proprity">estimited shipping</div>
@@ -836,13 +861,21 @@ function CartContainer({ pf }) {
             <hr />
             <div className="summaryItem">
               <div className="proprity"><strong>total</strong></div>
-              <div className="value"><strong>$ 80</strong></div>
+              <div className="value"><strong>$ {cart.total}</strong></div>
             </div>
           </div>
-          <button>
-            <div className="text">continue shopping</div>
-            <div className="layer"></div>
-          </button>
+          <StripeCheckout
+        name='Saw Shop'
+        image={PF + "logo.png"}
+        billingAddress
+        shippingAddress
+        description={'Your Total is $'+cart.total}
+        amount={cart.total*100}
+        token={onToken}
+        stripeKey={KEY}
+      >
+        <button>payment</button>
+      </StripeCheckout>
 
         </div>
       </div>

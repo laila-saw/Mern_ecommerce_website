@@ -135,6 +135,9 @@ top: 0;
   transform: translatey(10px);
   transition: .3s;
 }
+header>.content>.image>img{
+  object-fit: contain;
+}
 .language i{
   transform: rotate(0);
   transition: .3s;
