@@ -331,7 +331,7 @@ function Navbar({ pf }) {
           </div>
           <div className="col-md-4 col-2 nvabarRight">
             <div className="menuItem hasDisapair"><Link to="/signinup">Login/Register</Link></div>
-            <Link to='/success'>
+            <Link to='/cart'>
               <div className="menuItem">
                 <div className="iconBadge">{quantity}</div>
                 <div className="nvabarRightIcon"><i className="fa fa-shopping-cart"></i></div>
@@ -674,7 +674,7 @@ function ProductDetails({ pf }) {
   const dispatch = useDispatch()
   const handleAddToCart = () =>{
     dispatch(
-      addProduct({product,quantity,price:product.price * quantity})
+      addProduct({...product, quantity, color, size})
       )
     
   }
@@ -759,6 +759,7 @@ function ProductDetails({ pf }) {
   );
 }
 function CartContainer({ pf }) {
+  const cart=useSelector(state=>state.cart)
   return (
     <div className="cartContainer">
       <h1 className="title">Your Bag <i className="fa fa-shopping-cart"></i></h1>
@@ -779,68 +780,42 @@ function CartContainer({ pf }) {
       <div className="cartBottom row">
         <div className="col-sm-12 col-md-9 orderInfo ">
 
-          <div className="orderItem">
+          {
+            cart.products.map((item,i)=>(
+              <div key={i} className="orderItem">
             <div className="imgContainer">
-              <img src={pf + "p1.png"} alt="" />
+              <img src={pf + item.img[0]} alt="" />
             </div>
             <div className="orderDetails">
               <div className="proprities">
                 <div className="proprityItem">
                   <div className="proprity name">Product : </div>
-                  <span className='value'>dress</span>
+                  <span className='value'>{item.title}</span>
                 </div>
                 <div className="proprityItem">
                   <div className="proprity name">ID : </div>
-                  <span className='value'>123456789</span>
+                  <span className='value'>{item._id}</span>
                 </div>
                 <div className="proprityItem color">
                   <div className="proprity ">Color : </div>
-                  <span className='value'><div className="circle"></div></span>
+                  <span className='value'><div style={{background:item.color}} className="circle"></div></span>
                 </div>
                 <div className="proprityItem">
                   <div className="proprity name">Size : </div>
-                  <span className='value'>L</span>
+                  <span className='value'>{item.size}</span>
                 </div>
               </div>
               <div className="numpric">
                 <div className="quantity">
-                  <span className='controlBtn'>-</span> <span className="num">1</span> <span className='controlBtn'>+</span>
+                  <span className='controlBtn'>-</span> <span className="num">{item.quantity}</span> <span className='controlBtn'>+</span>
                 </div>
-                <div className="price">$ 30</div>
+                <div className="price">$ {item.price*item.quantity}</div>
               </div>
             </div>
           </div>
-          <div className="orderItem">
-            <div className="imgContainer">
-              <img src={pf + "p1.png"} alt="" />
-            </div>
-            <div className="orderDetails">
-              <div className="proprities">
-                <div className="proprityItem">
-                  <div className="proprity name">Product : </div>
-                  <span className='value'>dress</span>
-                </div>
-                <div className="proprityItem">
-                  <div className="proprity name">ID : </div>
-                  <span className='value'>123456789</span>
-                </div>
-                <div className="proprityItem">
-                  <div className="proprity name">Color : </div>
-                  <span className='value'><div className="circle"></div></span>
-                </div>
-                <div className="proprityItem">
-                  <div className="proprity name">Size : </div>
-                  <span className='value'>L</span>
-                </div>
-              </div>
-              <div className="numpric">
-                <div className="quantity">
-                  <span className='controlBtn'>-</span> <span className="num">1</span> <span className='controlBtn'>+</span>
-                </div>
-                <div className="price">$ 30</div>
-              </div>
-            </div>
-          </div>
+            ))
+            
+          }
 
         </div>
         <div className="col-sm-12 col-md-3 orderSummury">
