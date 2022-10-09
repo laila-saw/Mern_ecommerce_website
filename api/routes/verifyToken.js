@@ -14,6 +14,7 @@ const verifyToken = (req,res,next)=>{
             }
         })
     }else{
+        console.log(authHeader)
         return res.status(401).json("Your are not authenticated!");
     }
 }

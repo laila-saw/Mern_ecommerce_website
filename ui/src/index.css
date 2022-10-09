@@ -138,6 +138,12 @@ top: 0;
 header>.content>.image>img{
   object-fit: contain;
 }
+.error{
+  color: red;
+    margin: 4px 0;
+    font-size: 14px;
+    font-weight: 500;
+}
 .language i{
   transform: rotate(0);
   transition: .3s;

@@ -17,24 +17,28 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 import { publicRequest, userRequest } from './requestMethods';
 import {Provider} from "react-redux"
-import store from "./redux/store"
+import {store,persistor} from "./redux/store"
 import {useSelector} from 'react-redux'
 import { addProduct } from './redux/cartRedux';
 import {useDispatch} from "react-redux";
+import { login } from './redux/apiCalls';
+import { PersistGate } from 'redux-persist/integration/react'
 const KEY= process.env.REACT_APP_STRIPE;
 // 00:11 -> 22:08
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Router>
     <Provider store={store}>
-    <ScrollToTop />
+    <PersistGate loading={null} persistor={persistor}>
+      <ScrollToTop />
     <App />
+    </PersistGate>
     </Provider>
   </Router>
   ,
 );
 function App() {
-  const user = true;
+  const user = useSelector(state=>state.user.currentUser);
   return (
     <Routes>
 
@@ -98,12 +102,50 @@ function Pay() {
 }
 function Success() {
   const location = useLocation()
-  console.log("location : ",location)
+  console.log("location : ",location.state)
+  const stripeData=location.state
+  const userId ="633d45228156f5b90fdb70a3",
+  products=location.state.products,
+  amount=location.state.data.amount,
+  address=stripeData.orderAdress
+  const orderId=false
+  // creacte order 
+  useEffect(() => {
+    const createOrder = async () =>{
+      try {
+      const res= await userRequest.post("/order/createOrder",{
+        userId:userId, 
+        products:[{
+          productId:"633d4a538156f5b90fdb70b9"
+        }],
+        amount:amount,
+        address:address
+      })
+      console.log("orderResponse",res)
+    } catch (error) {
+      console.log("orderError",error)
+    }
+    }
+
+    stripeData && createOrder()
+  }, [])
+  
   return (
     <>
-      <div>
-        successful
-      </div>
+       <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {orderId
+        ? `Order has been created successfully. Your order number is ${orderId}`
+        : `Your order is being prepared...`}
+      <button style={{ padding: 10, marginTop: 20 }}>Go to Homepage</button>
+    </div>
     </>
   )
 }
@@ -179,14 +221,26 @@ function Cart() {
 // !cart
 // Signinup  
 function Signinup() {
-  const [login, setLogin] = useState(false);
+  const [logintoggle, setLogintoggle] = useState(false);
+  const [email,setEmail]=useState("")
+  const [password,setPassword]=useState("")
+  const {isFetching,error} =useSelector((state)=> state.user)
+  const dispatch=useDispatch()
+  const currentUser={
+    email:email,
+    password:password
+  }
+  const handleSubmit = (e) =>{
+    e.preventDefault()
+    login(dispatch, currentUser)
+  }
   return (
     <div className='signinup'>
       <div className="signinupBg leftBg"><img src="./img/p20.png" alt="" /></div>
       <div className="signinupBg rightBg"><img src="./img/p20-2.png" alt="" /></div>
       <div className="wrapper">
         <div className="title-text">
-          <div className="title login" style={{ marginLeft: login && "-50%" }}>Login</div>
+          <div className="title login" style={{ marginLeft: logintoggle && "-50%" }}>Login</div>
           <div className="title login">Register</div>
         </div>
 
@@ -195,35 +249,40 @@ function Signinup() {
             <input type="radio"
               name='slider'
               id='login'
-              checked={!login && true}
+              checked={!logintoggle && true}
               hidden
               onChange={(e) => (e.target.value)} />
             <input type="radio"
               name='slider'
               id='signup'
-              checked={login && true}
+              checked={logintoggle && true}
               onChange={(e) => (e.target.value)}
               hidden />
-            <label htmlFor="login" className='slide login' onClick={() => { setLogin(false) }}>Login</label>
-            <label htmlFor="signup" className='slide singup' onClick={() => { setLogin(true) }}>SingUp</label>
+            <label htmlFor="login" className='slide login' onClick={() => { setLogintoggle(false) }}>Login</label>
+            <label htmlFor="signup" className='slide singup' onClick={() => { setLogintoggle(true) }}>SingUp</label>
             <div className="slide-tab"></div>
           </div>
           <div className="form-inner">
             <form
-              style={{ marginLeft: login && "-50%" }}
+            autocomplete="off"
+            autoSave='off'
+              style={{ marginLeft: logintoggle && "-50%" }}
               className='login'>
               <div className="field">
-                <input type="email" placeholder='Email Address' />
+                <input   onChange={(e)=>setEmail(e.target.value)} type="email" placeholder='Email Adress' />
               </div>
               <div className="field">
-                <input type="password" placeholder='Password' />
+                <input  onChange={(e)=>setPassword(e.target.value)} type="password" placeholder='Password' />
               </div>
               <div className="pass-link"><Link to=''>Forgot password ?</Link></div>
-              <button>Login</button>
-              <div className="signupLink" onClick={() => { setLogin(true) }}>Not a member ? <Link to=''>Sign Up Now</Link></div>
+              <button disabled={isFetching} style={{cursor:isFetching && "not-allowed"}} onClick={handleSubmit}>Loginn</button>
+              {
+                error && <div className="error">Wrong Email or Password!</div>
+              }
+              <div className="signupLink" onClick={() => { setLogintoggle(true) }}>Not a member ? <Link to=''>Sign Up Now</Link></div>
             </form>
             <form
-              style={{ display: login && "block" }}
+              style={{ display: logintoggle && "block" }}
               className='signup'>
               <div className="field " style={{ display: "flex", justifyContent: "space-between" }}>
                 <input type="text" style={{ width: "49%" }} placeholder='First Name' />
@@ -239,7 +298,7 @@ function Signinup() {
                 <input type="password" placeholder='Confirm Your Password' />
               </div>
               <button>Register</button>
-              <div className="signupLink" onClick={() => { setLogin(false) }}>Already sign up ? <Link to=''>login Now</Link></div>
+              <div className="signupLink" onClick={() => { setLogintoggle(false) }}>Already sign up ? <Link to=''>login Now</Link></div>
             </form>
           </div>
         </div>
@@ -275,7 +334,7 @@ function Navbar({ pf }) {
       document.querySelector('.navbar')?.classList.remove('fixed');
     }
   }
-  
+  const user = useSelector(state => state.user.currentUser)
   return (
     <div className="navbar">
       <div className="navbarWrapper container-fluid">
@@ -302,7 +361,11 @@ function Navbar({ pf }) {
               </div>
             </div>
           </div>
-          <div className="mobileItem"><Link to="/signinup">login/Register</Link></div>
+          {
+            user 
+            ? <div className="mobileItem"><Link to="/signinup">Logout</Link></div>
+            : <div className="mobileItem"><Link to="/signinup">Register/Login</Link></div>
+          }
         </div>
         <div className="row">
           <div className="col-md-4 col-2 nvabarLeft">
@@ -331,10 +394,16 @@ function Navbar({ pf }) {
             </div>
           </div>
           <div className="col-md-4 col-8 nvabarCenter">
-            <Link to="/pay"><img src={pf + "logo.png"} alt="" className="logo" /></Link>
+            <Link to="/"><img src={pf + "logo.png"} alt="" className="logo" /></Link>
           </div>
           <div className="col-md-4 col-2 nvabarRight">
-            <div className="menuItem hasDisapair"><Link to="/signinup">Login/Register</Link></div>
+            <div className="menuItem hasDisapair">
+              {
+                user 
+                ? <Link to="/signinup">Logout</Link>
+                : <Link to="/signinup">Login/Register</Link>
+              }
+            </div>
             <Link to='/cart'>
               <div className="menuItem">
                 <div className="iconBadge">{quantity}</div>
@@ -427,7 +496,7 @@ function Products({ pf, category, sort, filters }) {
           category
             ? "http://localhost:5000/api/product?category=" + category
             : "http://localhost:5000/api/product")
-        console.log("res", res.data)
+        console.log("ress", res.data)
         setProducts(res.data)
       } catch (err) {
         console.log(err)
@@ -461,7 +530,7 @@ function Products({ pf, category, sort, filters }) {
     }
   }, [sort])
 
-
+console.log("products : **** ",products)
   return (
     <div className="products row">
       {category
@@ -777,7 +846,8 @@ function CartContainer({ pf }) {
           tokenId: stripeToken.id,
           amount:cart.total * 100,
         })
-        navigate("/success",{state:{data:res.data}})
+        const orderAdress=stripeToken.card.address_city+", "+stripeToken.card.address_line1+", "+stripeToken.card.address_country
+        navigate("/success",{state:{data:res.data,orderAdress,products:cart.products}})
       } catch (error) {
         console.log(error)
       }
