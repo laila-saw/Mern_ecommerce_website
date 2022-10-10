@@ -22,7 +22,7 @@ mongoose
     console.log(error)
 })
 // start our application 
-app.use(cors());
+app.use(cors())
 app.use(express.json())
 app.use('/api/user',userRoute)
 app.use('/api/auth',authRoute)

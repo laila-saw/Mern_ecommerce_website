@@ -9,18 +9,24 @@ import NewUser from './pages/NewUser'
 import ProductList from './pages/ProductList'
 import Product from './pages/Product'
 import NewProduct from './pages/NewProduct'
-import Login from './pages/Login'
+import LoginAdmin from './pages/LoginAdmin'
 import { useState } from 'react'
+import {useSelector} from 'react-redux'
 
 const App = () => {
   const [sidebarOpened,setSidebarOpened]=useState(false)
+  const user = false;
     return (
         <Router>
-            <Topbar />
+            {
+              user && <Topbar />
+            }
             <div className={sidebarOpened ? "cap container sticky" : "cap container"}>
-              <Sidebar 
-            sidebarOpened={sidebarOpened} 
-            setSidebarOpened={setSidebarOpened} />
+              {
+                user && <Sidebar 
+                sidebarOpened={sidebarOpened} 
+                setSidebarOpened={setSidebarOpened} />
+              }
             <Routes>
           <Route exact path="" element={<Home />} />
           <Route path='/userList' element={<UserList />} />
@@ -29,7 +35,7 @@ const App = () => {
           <Route path='/productList' element={<ProductList />} />
           <Route path='/product/:productId' element={<Product />} />
           <Route path='/newproduct' element={<NewProduct />} />
-          <Route path='/login' element={<Login />} />
+          <Route path='/login' element={<LoginAdmin />} />
         </Routes>
             </div>
             

@@ -1,17 +1,19 @@
 import { Email, Lock, RemoveRedEye, VisibilityOffSharp } from '@material-ui/icons'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { login } from '../Redux/apiCalls'
 
-const Login = () => {
+const LoginAdmin = () => {
     const [showPwd,setShowPwd]=useState(false)
     const [adminLogin,setAdminLogin]=useState({
       email:"",
       password:""
     })
-    console.log(adminLogin)
+    const dispatch = useDispatch()
     function handleClick(e){
       e.preventDefault()
-  
+      login(dispatch,{email:adminLogin.email,password:adminLogin.password})
     }
     return(
       <div className="login">
@@ -53,4 +55,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default LoginAdmin
