@@ -1,9 +1,15 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { sidebarMenu } from '../Data'
+import { logout } from '../Redux/apiCalls'
 
 const Sidebar = ({ setSidebarOpened, sidebarOpened }) => {
-    
+    function handleClick(id){
+      if(id===3){
+        console.log("first")
+        
+      }
+    }
     return (
       <div className="sidebar">
         <div className="controlIcon" onClick={() => setSidebarOpened(!sidebarOpened)}>
@@ -17,11 +23,11 @@ const Sidebar = ({ setSidebarOpened, sidebarOpened }) => {
             <span className="tooltip ">search</span>
           </div>
           {
-            sidebarMenu.map((menu) => (
+            sidebarMenu.map((menu,i) => (
               <div className="sidebarMenu" key={menu.id}>
                 <ul className="sidebarList" onClick={() => setSidebarOpened(false)}>
                   {menu.list.map((li) => (
-                    <li key={li.id} className="sidebarListItem">
+                    <li onClick={()=> handleClick(i)} key={li.id} className="sidebarListItem">
                       <Link to={li.link} >
                         <div className="icon"><i className={li.icon}></i></div>
                         <span className="text ">{li.item}</span>
